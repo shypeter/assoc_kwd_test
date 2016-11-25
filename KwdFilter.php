@@ -1,7 +1,7 @@
 <?php
 function kwdFilter($kwd) {
-	$kwd_len_arr = $this->_getKwdLen($kwd);
-	if (($kwd_len_arr[0] > 10) || ($kwd_len_arr[0] > 1 && $kwd_len_arr[1] == 'en')) {
+	$kwd_len_arr = _getKwdLen($kwd);
+	if (($kwd_len_arr[0] == 1) || ($kwd_len_arr[0] > 10) || ($kwd_len_arr[0] > 1 && $kwd_len_arr[1] == 'en')) {
 		return '';
 	} else if ($kwd_len_arr[1] == 'en') {
 		$res = preg_split("/ /", $kwd);
@@ -27,7 +27,7 @@ function kwdFilter($kwd) {
 	$kwd = str_replace($vowels, '', $kwd);
 	$vowels = array('／');
 	$kwd = str_replace($vowels, '/', $kwd);
-	$kwd = $this->font_width_change($kwd);
+	$kwd = font_width_change($kwd);
 
 	$res = preg_split("/[ ]+/", $kwd);
 	$arr_len = count($res);
@@ -44,7 +44,7 @@ function kwdFilter($kwd) {
 	$kwd = '';
 	$res = array_values($res);
 	foreach($res as $index => $val) {
-		$kwd_len_res = $this->_getKwdLen($val);
+		$kwd_len_res = _getKwdLen($val);
 		if( $kwd_len_res[0] <= 20 ){
 			$kwd .= $val;
 			if ($index != $arr_len) {
@@ -61,7 +61,7 @@ function _getKwdLen( $str='' ) {
 	$s = strlen($str);
 	if ( $s == $m ) {
 		//english
-		$en_len = $this->_getEnStrLen($str);
+		$en_len = _getEnStrLen($str);
 		return array($en_len, 'en');
 	}
 	
@@ -78,7 +78,7 @@ function _getKwdLen( $str='' ) {
 			$str = str_replace($val, '', $str);
 		}
 	}
-	$count += $this->_getEnStrLen($str);
+	$count += _getEnStrLen($str);
 	//mix
 	return array($count, 'mix');
 }

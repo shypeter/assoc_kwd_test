@@ -18,7 +18,7 @@ Jieba::init();
 Finalseg::init();
 $content = file_get_contents("fileText.txt");
 $words_arr = Jieba::cut($content);
-
+$words_arr = check_kwds($words_arr);
 $tset = new TrainingSet();
 $tset->addDocument(
     '', // the class is not used by the lda model
@@ -42,3 +42,11 @@ print_r(
     // just the 10 largest probabilities
     $lda->getWordsPerTopicsProbabilities(10)
 );
+
+function check_kwds($words_arr) {
+	foreach ($words_arr as $index => $val) {
+		if (kwdFilter($val) == '')
+			unset($words_arr[$index]);
+	}
+	return $words_arr;
+}
