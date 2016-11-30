@@ -148,8 +148,7 @@ class Lda
       *
       * @param array $docs The docs that we will use to generate the sample
       */
-    public function gibbsSample(array &$docs)
-    {
+    public function gibbsSample(array &$docs) {
         foreach ($docs as $i=>$doc) {
             foreach ($doc as $idx=>$w) {
                 // remove word $w from the dataset
@@ -307,18 +306,18 @@ class Lda
      protected function conditionalDistribution($i,$w)
      {
          $p = array_fill_keys(range(0,$this->ntopics-1),0);
-         for ($topic=0;$topic<$this->ntopics;$topic++) {
+         for ($topic=0 ; $topic < $this->ntopics ; $topic++) {
             if (isset($this->count_topics_words[$topic][$w]))
-                $numerator = $this->count_topics_words[$topic][$w]+$this->b;
+                $numerator = $this->count_topics_words[$topic][$w] + $this->b;
             else
                 $numerator = $this->b;
 
-            $numerator *= $this->count_docs_topics[$i][$topic]+$this->a;
+            $numerator *= $this->count_docs_topics[$i][$topic] + $this->a;
 
-            $denominator = $this->words_in_topic[$topic]+$this->voccnt*$this->b;
-            $denominator *= $this->words_in_doc[$i]+$this->ntopics*$this->a;
+            $denominator = $this->words_in_topic[$topic] + $this->voccnt * $this->b;
+            $denominator *= $this->words_in_doc[$i] + $this->ntopics * $this->a;
 
-            $p[$topic] = $numerator/$denominator;
+            $p[$topic] = $numerator / $denominator;
          }
 
          // divide by sum to obtain probabilities
