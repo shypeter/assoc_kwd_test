@@ -19,12 +19,11 @@ require_once dirname(dirname(__FILE__))."/vendor/multi-array/Factory/MultiArrayF
 use Fukuball\Tebru\MultiArray;
 
 $content = fopen(dirname(dirname(__FILE__))."/dict/dict.big.txt", "r");
-
 $trie = new MultiArray(array());
 
 while (($line = fgets($content)) !== false) {
 
-    echo $line;
+    //echo $line;
 
     $explode_line = explode(" ", trim($line));
     $word = $explode_line[0];
@@ -36,9 +35,7 @@ while (($line = fgets($content)) !== false) {
     }
     $word_c_key = implode('.', $word_c);
     $trie->set($word_c_key, array("end"=>""));
-
 }
-
 file_put_contents(dirname(dirname(__FILE__))."/dict/dict.big.txt.json", json_encode($trie->storage));
 file_put_contents(dirname(dirname(__FILE__))."/dict/dict.big.txt.cache.json", json_encode($trie->cache));
 ?>
