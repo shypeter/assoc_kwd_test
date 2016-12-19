@@ -19,8 +19,6 @@ Finalseg::init();
 $content = file_get_contents("fileText.txt");
 $words_arr = Jieba::cut($content);
 $words_arr = check_kwds($words_arr);
-var_dump($words_arr);
-exit;
 $tset = new TrainingSet();
 $tset->addDocument(
     '', // the class is not used by the lda model
