@@ -5,6 +5,7 @@ require_once __DIR__."/src/vendor/multi-array/Factory/MultiArrayFactory.php";
 require_once __DIR__."/src/class/Jieba.php";
 require_once __DIR__."/src/class/Finalseg.php";
 require_once __DIR__."/KwdFilter.php";
+require_once __DIR__."/Tokenizer.php";
 require_once __DIR__."/bootstrap.php";
 
 use NlpTools\FeatureFactories\DataAsFeatures;
@@ -13,10 +14,15 @@ use NlpTools\Documents\TrainingSet;
 use NlpTools\Models\Lda;
 use Fukuball\Jieba\Jieba;
 use Fukuball\Jieba\Finalseg;
-
 Jieba::init();
 Finalseg::init();
 $content = file_get_contents("fileText.txt");
+
+$tok = new Tokenizer();
+$res = $tok->segmentation($content);
+var_dump($res);
+exit;
+
 $words_arr = Jieba::cut($content);
 $words_arr = check_kwds($words_arr);
 $tset = new TrainingSet();
