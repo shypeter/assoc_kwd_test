@@ -1,7 +1,5 @@
 <?php
 class Tokenizer {
-	//public function __construct() {
-	//}
 
 	public function segmentation($content) {
 		if(empty($content))
@@ -10,13 +8,22 @@ class Tokenizer {
 		$content = $this->_content_filter($content);
 		$data = $this->_en_ch_split($content);
 		$result = $this->_set_result($data);
+		$result = $this->_get_kwds_only($result);
 		return $result;
+	}
+	
+	private function _get_kwds_only($result) {
+		$new_res = [];
+		foreach ($result as $val) {
+			$new_res[] = $val["keyword"];
+		}
+		return $new_res;
 	}
 	
 	private function _en_ch_split($content) {
 		$ngram = 15;
 		$strlen = 2;
-		$threshold = 2;
+		$threshold = 5;
 		$stop_words = $this->_get_stop_words();
 		$content = str_replace($stop_words," ",$content);
 		$seg_content = explode(" ", $content);
@@ -24,7 +31,7 @@ class Tokenizer {
 		while($ngram >= $strlen) {
 			$content = preg_replace('/[A-Za-z0-9_]/', '', $content);
 			$terms = $this->_n_gram_algorithm($seg_content, $ngram);
-			arsort($terms);
+			//arsort($terms);
 			$data = $this->_extract_terms($data, $terms, $threshold, $strlen);
 			$ngram --;
 		}

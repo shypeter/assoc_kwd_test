@@ -18,13 +18,18 @@ Jieba::init();
 Finalseg::init();
 $content = file_get_contents("fileText.txt");
 
-$tok = new Tokenizer();
-$res = $tok->segmentation($content);
-var_dump($res);
-exit;
+//$tok = new Tokenizer();
+//$res = $tok->segmentation($content);
+//$res = array_flip($res);
 
 $words_arr = Jieba::cut($content);
 $words_arr = check_kwds($words_arr);
+foreach($words_arr as $index => $val) {
+	if(!isset($res[$val])){
+		unset($words_arr[$index]);
+	}
+}
+
 $tset = new TrainingSet();
 $tset->addDocument(
     '', // the class is not used by the lda model
