@@ -74,7 +74,6 @@ class Lda
     {
         $doc_keys = range(0,count($docs)-1);
         $topic_keys = range(0,$this->ntopics-1);
-
         // initialize the arrays
         $this->words_in_doc = array_fill_keys(
             $doc_keys,
@@ -135,7 +134,6 @@ class Lda
         $docs = $this->generateDocs($tset);
 
         $this->initialize($docs);
-
         while ($it-- > 0) {
             $this->gibbsSample($docs);
         }
