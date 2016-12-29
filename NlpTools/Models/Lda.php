@@ -105,17 +105,13 @@ class Lda
             foreach ($doc as $idx=>$w) {
                 // choose a topic randomly to assign this word to
                 $topic = (int) ($this->mt->generate()*$this->ntopics);
-
                 //$this->words_in_doc[$i]++;
                 $this->words_in_topic[$topic]++;
                 $this->count_docs_topics[$i][$topic]++;
-
                 if (!isset($this->count_topics_words[$topic][$w]))
                     $this->count_topics_words[$topic][$w]=0;
                 $this->count_topics_words[$topic][$w]++;
-
                 $this->word_doc_assigned_topic[$i][$idx] = $topic;
-
                 $this->voc[$w] = 1;
             }
         }
@@ -149,6 +145,7 @@ class Lda
     public function gibbsSample(array &$docs) {
         foreach ($docs as $i=>$doc) {
             foreach ($doc as $idx=>$w) {
+var_dump($w);
                 // remove word $w from the dataset
                 $topic = $this->word_doc_assigned_topic[$i][$idx];
                 $this->count_docs_topics[$i][$topic]--;
@@ -191,10 +188,10 @@ class Lda
             array()
          );
          foreach ($p_t_w as $topic=>&$p) {
-             $denom = $this->words_in_topic[$topic]+$this->voccnt*$this->b;
+             $denom = $this->words_in_topic[$topic] + $this->voccnt * $this->b;
              foreach ($this->voc as $w) {
                  if (isset($this->count_topics_words[$topic][$w]))
-                    $p[$w] = $this->count_topics_words[$topic][$w]+$this->b;
+                    $p[$w] = $this->count_topics_words[$topic][$w] + $this->b;
                  else
                     $p[$w] = $this->b;
                  $p[$w] /= $denom;
@@ -311,16 +308,12 @@ class Lda
                 $numerator = $this->b;
 
             $numerator *= $this->count_docs_topics[$i][$topic] + $this->a;
-
             $denominator = $this->words_in_topic[$topic] + $this->voccnt * $this->b;
             $denominator *= $this->words_in_doc[$i] + $this->ntopics * $this->a;
-
             $p[$topic] = $numerator / $denominator;
          }
-
          // divide by sum to obtain probabilities
          $sum = array_sum($p);
-
          return array_map(
             function ($p) use ($sum) {
                 return $p/$sum;
@@ -335,12 +328,21 @@ class Lda
       *
       * @return int The index that was drawn.
       */
-     protected function drawIndex(array $d)
-     {
+     protected function drawIndex(array $d) {
          $x = $this->mt->generate();
          $p = 0.0;
-         foreach ($d as $i=>$v) {
-             $p+=$v;
+         foreach ($d as $i => $v) {
+var_dump("v:");
+var_dump($v);
+var_dump("p:");
+var_dump($p);
+var_dump("i:");
+var_dump($i);
+             $p += $v;
+var_dump('$p += $v');
+var_dump($p);
+var_dump("x:");
+var_dump($x);
              if ($p > $x)
                 return $i;
          }

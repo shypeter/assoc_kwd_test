@@ -24,7 +24,6 @@ $res = $tok->segmentation($content);
 $words_arr = strpos_array($content, $res);
 
 //$res = array_flip($res);
-//var_dump($res);
 //exit;
 
 //$words_arr = Jieba::cut($content);
@@ -58,10 +57,9 @@ $lda = new Lda(
  
 // run the sampler 50 times
 $lda->train($tset,50);
-var_dump($lda->getLogLikelihood());
 
 // just the 10 largest probabilities
-//var_dump($lda->getWordsPerTopicsProbabilities(20));
+//var_dump($lda->getWordsPerTopicsProbabilities(10));
 
 function check_kwds($words_arr) {
 	foreach ($words_arr as $index => $val) {
