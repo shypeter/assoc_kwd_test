@@ -1,6 +1,9 @@
 <?php
-class Tokenizer {
+define("NGRAM", 15);
+define("STRLENGTH", 2);
+define("THRESHOLD", 5);
 
+class Tokenizer {
 	public function segmentation($content) {
 		if(empty($content))
 			return -1;
@@ -21,9 +24,9 @@ class Tokenizer {
 	}
 	
 	private function _en_ch_split($content) {
-		$ngram = 15;
-		$strlen = 2;
-		$threshold = 5;
+		$ngram = NGRAM;
+		$strlen = STRLENGTH;
+		$threshold = THRESHOLD;
 		$stop_words = $this->_get_stop_words();
 		$content = str_replace($stop_words," ",$content);
 		$seg_content = explode(" ", $content);
@@ -142,44 +145,6 @@ class Tokenizer {
 		}
 		return $terms;
 	}
-
-//	private function _en_word_count($content) {
-//		$wordsSequencesCount = [];
-//		$en_content = preg_replace('~[^a-zA-Z0-9 &,;!?.]+~', ' ', $content);
-//		$sentences = preg_split('/[^\s|\d|\pL]/', $en_content, -1, PREG_SPLIT_NO_EMPTY );
-//		foreach ($sentences as $sentence) {
-//			$words = array_map('mb_strtolower', preg_split('/[^\d|\pL+]/', $sentence, -1, PREG_SPLIT_NO_EMPTY ));
-//			foreach ($words as $index => $word) {
-//				$wordsSequence = '';
-//				foreach (array_slice($words, $index) as $nextWord) {
-//						$wordsSequence .= $wordsSequence ? (' ' . $nextWord) : $nextWord;
-//					if (!isset($wordsSequencesCount[$wordsSequence]) ) {
-//						$wordsSequencesCount[$wordsSequence] = 0;
-//					}
-//					++$wordsSequencesCount[$wordsSequence];
-//				}
-//			}
-//		}
-//
-//		if (count($wordsSequencesCount) > 0) {
-//			arsort($wordsSequencesCount);
-//			foreach ($wordsSequencesCount as $k => $v) {
-//				$kk = explode(" ", $k);
-//				// 重複出現的字濾掉
-//				if (count($kk) > 1 && count(array_count_values($kk)) < 2)
-//					continue;
-//				if ($v < $threshold)
-//					continue;
-//				if ($k == '')
-//					continue;
-//				if (mb_strlen($k) < 3)
-//					continue;
-//				//$data["$k"] = $v;
-//				$i++;
-//			}
-//		}
-//		//echo json_encode($wordsSequencesCount); exit;
-//	}
 
 	private function _content_filter($content) {
 		$content = preg_replace("#(^|[\n ])([\w]+?://[\w\#$%&~/.\-;:=,?@\[\]+]*)#is", " ", $content);
