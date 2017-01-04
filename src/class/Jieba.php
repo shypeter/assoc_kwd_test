@@ -47,13 +47,12 @@ class Jieba
      */
     public static function init($options = array())
     {
-        $defaults = array(
-            'mode'=>'default',
-            'dict'=>'normal'
-        );
-
-        $options = array_merge($defaults, $options);
-
+    //    $defaults = array(
+    //        'mode'=>'default',
+    //        'dict'=>'normal'
+    //    );
+		//
+    //    $options = array_merge($defaults, $options);
         if ($options['mode']=='test') {
             echo "Building Trie...\n";
         }
@@ -68,7 +67,6 @@ class Jieba
             $f_name = "dict.txt";
             self::$dictname="dict.txt";
         }
-
         $t1 = microtime(true);
         self::$trie = Jieba::genTrie(dirname(dirname(__FILE__))."/dict/".$f_name);
         foreach (self::$FREQ as $key => $value) {

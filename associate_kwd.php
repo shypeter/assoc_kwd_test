@@ -5,35 +5,31 @@ require_once __DIR__."/src/vendor/multi-array/Factory/MultiArrayFactory.php";
 require_once __DIR__."/KwdFilter.php";
 require_once __DIR__."/Tokenizer.php";
 require_once __DIR__."/bootstrap.php";
-require_once __DIR__."/src/class/Jieba.php";
+//require_once __DIR__."/src/class/Jieba.php";
 //require_once __DIR__."/src/class/Finalseg.php";
 
 use NlpTools\FeatureFactories\DataAsFeatures;
 use NlpTools\Documents\TokensDocument;
 use NlpTools\Documents\TrainingSet;
 use NlpTools\Models\Lda;
-use Fukuball\Jieba\Jieba;
+//use Fukuball\Jieba\Jieba;
 //use Fukuball\Jieba\Finalseg;
-$defaults = array(
-	'mode'=>'default',
-	'dict'=>'big'
-);
-Jieba::init($defaults);
+define("KWD", "雞尾酒");
+//$defaults = array(
+//	'mode'=>'default',
+//	'dict'=>'big'
+//);
+//Jieba::init($defaults);
 //Finalseg::init();
 
 $content = file_get_contents("fileText.txt");
-
-$words_arr = Jieba::cut($content);
-$words_arr = check_kwds($words_arr);
-foreach ($res as $index => $val) {
-	$words_arr[$index] = $val;
-}
+$content = str_replace(KWD, "", $content);
+//$words_arr = Jieba::cut($content);
+//$words_arr = check_kwds($words_arr);
+$tok = new Tokenizer();
+$res = $tok->segmentation($content);
+$words_arr = strpos_array($content, $res);
 ksort($words_arr);
-var_dump($words_arr); exit;
-//$tok = new Tokenizer();
-//$res = $tok->segmentation($content);
-//$words_arr = strpos_array($content, $res);
-
 $tset = new TrainingSet();
 $tset->addDocument(
     '', // the class is not used by the lda model
@@ -44,21 +40,21 @@ $tset->addDocument(
  
 $lda = new Lda(
     new DataAsFeatures(), // a feature factory to transform the document data
-    5, // the number of topics we want
+    3, // the number of topics we want
     1, // the dirichlet prior assumed for the per document topic distribution
     1  // the dirichlet prior assumed for the per word topic distribution
 );
  
 // run the sampler 50 times
-$lda->train($tset,50);
+$lda->train($tset, 50);
 
 // just the 10 largest probabilities
 list($ptw, $words_in_topic) = $lda->getWordsPerTopicsProbabilities(10);
-$conn = db_init();
-$kwd_hash = get_keyword_hash($conn);
+//$conn = db_init();
+$kwd_hash = [];//get_keyword_hash($conn);
 list($unknow_kwd) = get_horizontal($kwd_hash, $ptw, $words_in_topic);
 //insert_unknow_kwd($conn, $unknow_kwd);
-$conn->close();
+//$conn->close();
 
 
 

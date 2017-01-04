@@ -29,10 +29,10 @@ class Tokenizer {
 		$threshold = THRESHOLD;
 		$stop_words = $this->_get_stop_words();
 		$content = str_replace($stop_words," ",$content);
-		$seg_content = explode(" ", $content);
+		$seg_content = preg_replace("/[A-Za-z0-9_]/", "", $content);
+		$seg_content = explode(" ", $seg_content);
 		$data = [];
 		while($ngram >= $strlen) {
-			$content = preg_replace('/[A-Za-z0-9_]/', '', $content);
 			$terms = $this->_n_gram_algorithm($seg_content, $ngram);
 			//arsort($terms);
 			$data = $this->_extract_terms($data, $terms, $threshold, $strlen);
@@ -183,12 +183,12 @@ class Tokenizer {
 			"基本上", "有一", "只能", "十分", "每個",  "00元", "期0利率", "贈品說明", "／期", "折1", "滿1", "◆", "9折", "00頁", 
 			"0公克", "震動", "送1次",  "說明", "商品", "保固", "介紹", "1年", "規格", "效果", "全館消費", "哪停", "═", "感覺", "剛剛",
 			"謝謝",  "出來", "今天", "rrr", "—", "›", "動態時報相片",  "一起", "分享", "▶︎", "＝", "█", "_", " ", "表示", "活動",
-			"．", "exif資訊", "檢視照片", "這裡", "kkkk", "≡≡", "提供", "奇摩", "購物中心", "痞客邦"];
+			"．", "exif資訊", "檢視照片", "這裡", "kkkk", "≡≡", "提供", "奇摩", "購物中心", "痞客邦", "包括","無法"];
 		return $stop_words;
 	}
 	
 	private function _get_conn_words() {
-		$conn_words = ["之"=>1, "於"=>1, "的"=>1, "比"=>1, "讓"=>1, "跟"=>1, "是"=>1, "我"=>1, "你"=>1, "他"=>1, "在"=>1, "依"=>1, "以"=>1, "替"=>1, "跟"=>1, "為"=>1, "每"=>1, "們"=>1, "更"=>1, "約"=>1, "會"=>1];
+		$conn_words = ["之"=>1, "於"=>1, "的"=>1, "比"=>1, "讓"=>1, "跟"=>1, "是"=>1, "我"=>1, "你"=>1, "他"=>1, "在"=>1, "依"=>1, "以"=>1, "替"=>1, "跟"=>1, "為"=>1, "每"=>1, "們"=>1, "更"=>1, "約"=>1, "會"=>1, "及"=>1];
 		return $conn_words;
 	}
 
