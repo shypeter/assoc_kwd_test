@@ -5,27 +5,15 @@ require_once __DIR__."/src/vendor/multi-array/Factory/MultiArrayFactory.php";
 require_once __DIR__."/KwdFilter.php";
 require_once __DIR__."/Tokenizer.php";
 require_once __DIR__."/bootstrap.php";
-//require_once __DIR__."/src/class/Jieba.php";
-//require_once __DIR__."/src/class/Finalseg.php";
 
 use NlpTools\FeatureFactories\DataAsFeatures;
 use NlpTools\Documents\TokensDocument;
 use NlpTools\Documents\TrainingSet;
 use NlpTools\Models\Lda;
-//use Fukuball\Jieba\Jieba;
-//use Fukuball\Jieba\Finalseg;
-define("KWD", "雞尾酒");
-//$defaults = array(
-//	'mode'=>'default',
-//	'dict'=>'big'
-//);
-//Jieba::init($defaults);
-//Finalseg::init();
+define("KWD", "有機");
 
 $content = file_get_contents("fileText.txt");
 $content = str_replace(KWD, "", $content);
-//$words_arr = Jieba::cut($content);
-//$words_arr = check_kwds($words_arr);
 $tok = new Tokenizer();
 $res = $tok->segmentation($content);
 $words_arr = strpos_array($content, $res);
@@ -50,8 +38,8 @@ $lda->train($tset, 50);
 
 // just the 10 largest probabilities
 list($ptw, $words_in_topic) = $lda->getWordsPerTopicsProbabilities(10);
-//$conn = db_init();
-$kwd_hash = [];//get_keyword_hash($conn);
+$conn = db_init();
+$kwd_hash = get_keyword_hash($conn);
 list($unknow_kwd) = get_horizontal($kwd_hash, $ptw, $words_in_topic);
 //insert_unknow_kwd($conn, $unknow_kwd);
 //$conn->close();
@@ -60,16 +48,26 @@ list($unknow_kwd) = get_horizontal($kwd_hash, $ptw, $words_in_topic);
 
 function get_horizontal($kwd_hash, $ptw, $words_in_topic) {
 	$unknow_kwd = [];
-//	foreach ($ptw as $idx => $topic) {
-//		foreach ($topic as $keyword => $val) {
-//			if (!isset($kwd_hash[$keyword])) {
-//				$unknow_kwd[$keyword] = 1;
-//				unset($ptw[$idx][$keyword]);
-//			}
-//		}
-//	}
-var_dump($ptw);
-var_dump($words_in_topic);
+	foreach ($ptw as $idx => $topic) {
+		foreach ($topic as $keyword => $val) {
+			if (!isset($kwd_hash[$keyword])) {
+				$unknow_kwd[$keyword] = 1;
+				unset($ptw[$idx][$keyword]);
+			}
+		}
+	}
+
+	$res = [];
+	arsort($words_in_topic);
+	foreach ($words_in_topic as $topic_idx => $topic) {
+		foreach ($ptw[$topic_idx] as $keyword => $val) {
+			if (!isset($ptw[$topic]))
+				$res[$keyword] = $val;
+		}
+	}
+	arsort($res);
+var_dump($res);
+var_dump($unknow_kwd);
 	return [$unknow_kwd];
 }
 
