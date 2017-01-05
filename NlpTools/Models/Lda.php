@@ -292,8 +292,7 @@ class Lda {
 	 *
 	 * @return array The vector of probabilites for all topics as computed by the equation 5
 	 */
-	protected function conditionalDistribution($i,$w)
-	{
+	protected function conditionalDistribution($i,$w) {
 		$p = array_fill_keys(range(0,$this->ntopics-1),0);
 		for ($topic=0 ; $topic < $this->ntopics ; $topic++) {
 			if (isset($this->count_topics_words[$topic][$w]))
@@ -310,10 +309,10 @@ class Lda {
 		$sum = array_sum($p);
 		return array_map(
 				function ($p) use ($sum) {
-				return $p/$sum;
+					return $p/$sum;
 				},
 				$p
-				);
+			);
 	}
 
 	/**
@@ -326,17 +325,7 @@ class Lda {
 		$x = $this->mt->generate();
 		$p = 0.0;
 		foreach ($d as $i => $v) {
-			//var_dump("v:");
-			//var_dump($v);
-			//var_dump("p:");
-			//var_dump($p);
-			//var_dump("i:");
-			//var_dump($i);
 			$p += $v;
-			//var_dump('$p += $v');
-			//var_dump($p);
-			//var_dump("x:");
-			//var_dump($x);
 			if ($p > $x)
 				return $i;
 		}
