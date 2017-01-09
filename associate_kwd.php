@@ -2,7 +2,6 @@
 ini_set('memory_limit', '1024M');
 require_once __DIR__."/src/vendor/multi-array/MultiArray.php";
 require_once __DIR__."/src/vendor/multi-array/Factory/MultiArrayFactory.php";
-require_once __DIR__."/KwdFilter.php";
 require_once __DIR__."/Tokenizer.php";
 require_once __DIR__."/bootstrap.php";
 require_once __DIR__."/Utilities.php";
@@ -13,32 +12,35 @@ use NlpTools\Documents\TrainingSet;
 use NlpTools\Models\Lda;
 
 date_default_timezone_set("Asia/Taipei");
-$dateTime = date("Y-m-d H:i:s");
+$time_stamp = time();
+$dateTime = date("Y-m-d H:i:s", $time_stamp);
+$date = date("Y-m-d", $time_stamp);
 $conn = db_init();
 start();
 $conn->close();
 
 function start() {
-	$kwds = get_log_kwd();
+	global $date;
+	$kwds = get_log_kwd($date);
 	foreach ($kwds as $kwd) {
 		gen_kwd($kwd);
 	}
 }
 
 function gen_kwd($kwd) {
+	var_dump($kwd);
 	global $dateTime;
 	$content = get_web_page("https://www.awoo.org/kelo/api/get_10_pages_gyserp/".rawurlencode($kwd));
 	$str_len = mb_strlen($content);
 	if ($str_len < 10000) {
-		var_dump("$kwd : pass ".$str_len);
+		var_dump("Pass, str_len = ".$str_len);
 		return;
 	}
 	
 	$content = str_replace($kwd, "", $content);
 	$tok = new Tokenizer();
 	$res = $tok->segmentation($content);
-	//go to earth mongo
-
+	$res = kwds_2_earth($res);
 	$words_arr = strpos_array($content, $res);
 	ksort($words_arr);
 	$tset = new TrainingSet();
@@ -61,14 +63,37 @@ function gen_kwd($kwd) {
 	
 	// just the 10 largest probabilities
 	list($ptw, $words_in_topic) = $lda->getWordsPerTopicsProbabilities(5);
+	get_horizontal($ptw, $words_in_topic);
 }
 
-function check_kwds($words_arr) {
-	foreach ($words_arr as $index => $val) {
-		if (kwdFilter($val) == '')
-			unset($words_arr[$index]);
+function get_horizontal($ptw, $words_in_topic) {
+	$res = [];
+	arsort($words_in_topic);
+	foreach ($words_in_topic as $topic_idx => $topic) {
+		foreach ($ptw[$topic_idx] as $keyword => $val) {
+			if (!isset($ptw[$topic]))
+				$res[$keyword] = $val;
+		}
 	}
-	return $words_arr;
+	arsort($res);
+	var_dump($res);
+}
+
+function kwds_2_earth($kwds_res) {
+	global $time_stamp;
+	$res = [];
+	$data = ["keywords" => json_encode($kwds_res)];
+	$content = get_web_page("http://earth.awoo.org/earth/api/getLastAdwordsByKeywords?realm=tw", $data);
+	$kwds_res = json_decode($content, true);
+	foreach ($kwds_res['result'] as $kwd => $val) {
+		if (isset($val["fa"]["updated_at"])) {
+			$u_at = strtotime($val["fa"]["updated_at"]);
+			if ($u_at > ($time_stamp-(86400*30*6))) {
+				$res[] = $kwd;
+			}
+		}
+	}
+	return $res;
 }
 
 function strpos_array($haystack, $needles) {

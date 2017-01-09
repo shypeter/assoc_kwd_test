@@ -1,21 +1,27 @@
 <?php
-function get_log_kwd() {
+function get_log_kwd($date) {
 	global $conn;
 	$kwds = [];
-	$query = "SELECT keyword FROM _log_job_adwords";
+//	$query = "SELECT key_word FROM `app_log` WHERE `path_param`='/kelo/query' and `log_time`>='$date 00:00:00' and `log_time`<='$date 23:59:59' group by `key_word`";
+	$query = "SELECT key_word FROM `app_log` WHERE `path_param`='/kelo/query' group by `key_word` order by log_id DESC LIMIT 10";
 	$res = $conn->query($query);
 	while($row = $res->fetch_array(MYSQLI_BOTH)) {
-		$kwds[] = $row['keyword'];
+		$split_arr = preg_split('/[,]+/', $row['key_word']);
+		foreach($split_arr as $kwd) {
+			if ($kwd!="")
+				$kwds[$kwd] = 1;
+		}
 	}
 	$res->free();
+	$kwds = array_keys($kwds);
 	return $kwds;
 }
 
 function db_init() {
-	$servername = "localhost";
-	$username = "root";
-	$password = "1qaz2wsx3edc";
-	$db = "keyword";
+	$servername = "pluto.awoo.org";
+	$username = "erp_tdh_rw";
+	$password = "h06udKYrfwDspChWkn>j";
+	$db = "awoo_erp";
 	// Create connection
 	$conn = new mysqli($servername, $username, $password, $db);
 	// Check connection
