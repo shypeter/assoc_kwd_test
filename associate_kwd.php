@@ -37,6 +37,8 @@ function gen_kwd($kwd) {
 	$content = str_replace($kwd, "", $content);
 	$tok = new Tokenizer();
 	$res = $tok->segmentation($content);
+	//go to earth mongo
+
 	$words_arr = strpos_array($content, $res);
 	ksort($words_arr);
 	$tset = new TrainingSet();
@@ -59,33 +61,6 @@ function gen_kwd($kwd) {
 	
 	// just the 10 largest probabilities
 	list($ptw, $words_in_topic) = $lda->getWordsPerTopicsProbabilities(5);
-	$kwd_hash = get_keyword_hash();
-	list($unknow_kwd) = get_horizontal($kwd_hash, $ptw, $words_in_topic);
-	insert_unknow_kwd($unknow_kwd, $dateTime);
-}
-
-function get_horizontal($kwd_hash, $ptw, $words_in_topic) {
-	$unknow_kwd = [];
-	foreach ($ptw as $idx => $topic) {
-		foreach ($topic as $keyword => $val) {
-			if (!isset($kwd_hash[$keyword])) {
-				$unknow_kwd[$keyword] = 1;
-				unset($ptw[$idx][$keyword]);
-			}
-		}
-	}
-
-	$res = [];
-	arsort($words_in_topic);
-	foreach ($words_in_topic as $topic_idx => $topic) {
-		foreach ($ptw[$topic_idx] as $keyword => $val) {
-			if (!isset($ptw[$topic]))
-				$res[$keyword] = $val;
-		}
-	}
-	arsort($res);
-	var_dump($res);
-	return [$unknow_kwd];
 }
 
 function check_kwds($words_arr) {

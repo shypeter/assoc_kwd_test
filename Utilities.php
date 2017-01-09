@@ -1,15 +1,4 @@
 <?php
-function get_keyword_hash() {
-	global $conn;
-	$kwd_hash = [];
-	$query = "SELECT keyword, speech FROM speech";
-	$res = $conn->query($query);
-	while($row = $res->fetch_array(MYSQLI_BOTH)) {
-		$kwd_hash[$row['keyword']] = $row['speech'];
-	}
-	return $kwd_hash;
-}
-
 function get_log_kwd() {
 	global $conn;
 	$kwds = [];
@@ -18,6 +7,7 @@ function get_log_kwd() {
 	while($row = $res->fetch_array(MYSQLI_BOTH)) {
 		$kwds[] = $row['keyword'];
 	}
+	$res->free();
 	return $kwds;
 }
 
@@ -34,16 +24,6 @@ function db_init() {
 	else
 		$conn->query("SET NAMES utf8");
 	return $conn;
-}
-
-function insert_unknow_kwd($unknow_kwd, $dateTime) {
-	global $conn;
-	if ($unknow_kwd) {
-		foreach ($unknow_kwd as $kwd => $val) {
-			$query = "INSERT IGNORE INTO unknow SET keyword='".$kwd."', created_at='".$dateTime."';";
-			$res = $conn->query($query);
-		}
-	}
 }
 
 function get_web_page($url, $data=array()) {//&$curl_info
