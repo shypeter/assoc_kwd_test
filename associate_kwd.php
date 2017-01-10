@@ -1,21 +1,18 @@
 <?php
-ini_set('memory_limit', '1024M');
-require_once __DIR__."/src/vendor/multi-array/MultiArray.php";
-require_once __DIR__."/src/vendor/multi-array/Factory/MultiArrayFactory.php";
+date_default_timezone_set("Asia/Taipei");
 require_once __DIR__."/Tokenizer.php";
 require_once __DIR__."/bootstrap.php";
 require_once __DIR__."/Utilities.php";
-include __DIR__."/Content.php";
-
+require_once __DIR__."/Content.php";
 use NlpTools\FeatureFactories\DataAsFeatures;
 use NlpTools\Documents\TokensDocument;
 use NlpTools\Documents\TrainingSet;
 use NlpTools\Models\Lda;
 
-date_default_timezone_set("Asia/Taipei");
 $time_stamp = time();
 $dateTime = date("Y-m-d H:i:s", $time_stamp);
 $date = date("Y-m-d", $time_stamp);
+
 $conn = db_init();
 start();
 $conn->close();
@@ -23,9 +20,8 @@ $conn->close();
 function start() {
 	global $date;
 	$kwds = get_log_kwd($date);
-	foreach ($kwds as $kwd) {
+	foreach ($kwds as $kwd)
 		gen_kwd($kwd);
-	}
 }
 
 function gen_kwd($kwd) {
