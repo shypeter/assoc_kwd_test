@@ -5,6 +5,7 @@ require_once __DIR__."/src/vendor/multi-array/Factory/MultiArrayFactory.php";
 require_once __DIR__."/Tokenizer.php";
 require_once __DIR__."/bootstrap.php";
 require_once __DIR__."/Utilities.php";
+include __DIR__."/Content.php";
 
 use NlpTools\FeatureFactories\DataAsFeatures;
 use NlpTools\Documents\TokensDocument;
@@ -30,7 +31,7 @@ function start() {
 function gen_kwd($kwd) {
 	var_dump($kwd);
 	global $dateTime;
-	$content = get_web_page("https://www.awoo.org/kelo/api/get_10_pages_gyserp/".rawurlencode($kwd));
+	$content = get_web_page(SERP_TEN.rawurlencode($kwd));
 	$str_len = mb_strlen($content);
 	if ($str_len < 10000) {
 		var_dump("Pass, str_len = ".$str_len);
@@ -83,7 +84,7 @@ function kwds_2_earth($kwds_res) {
 	global $time_stamp;
 	$res = [];
 	$data = ["keywords" => json_encode($kwds_res)];
-	$content = get_web_page("http://earth.awoo.org/earth/api/getLastAdwordsByKeywords?realm=tw", $data);
+	$content = get_web_page(LAK, $data);
 	$kwds_res = json_decode($content, true);
 	foreach ($kwds_res['result'] as $kwd => $val) {
 		if (isset($val["fa"]["updated_at"])) {
