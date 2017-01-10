@@ -84,7 +84,7 @@ class Tokenizer {
 
 		if(count($result) < 1)
 			return -1;
-		// 重新以出現頻率高者排序在前
+		//resort from High frequency to Low
 		$frequency = $length = [];
 		foreach ($result as $key => $row) {
 			$keyword[$key]  = $row['keyword'];

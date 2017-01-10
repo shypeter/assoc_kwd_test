@@ -50,7 +50,7 @@ function gen_kwd($kwd) {
 	 
 	$lda = new Lda(
 	    new DataAsFeatures(), // a feature factory to transform the document data
-	    5, // the number of topics we want
+	    3, // the number of topics we want
 	    1, // the dirichlet prior assumed for the per document topic distribution
 	    1  // the dirichlet prior assumed for the per word topic distribution
 	);
