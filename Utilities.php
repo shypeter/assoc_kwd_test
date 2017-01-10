@@ -21,9 +21,7 @@ function db_init() {
 	$username = DB_USER;
 	$password = DB_PASSWORD;
 	$db = DB_DB;
-	// Create connection
 	$conn = new mysqli($servername, $username, $password, $db);
-	// Check connection
 	if ($conn->connect_error)
 		die("Connection failed: " . $conn->connect_error);
 	else
