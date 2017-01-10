@@ -25,12 +25,12 @@ function start() {
 }
 
 function gen_kwd($kwd) {
-	var_dump($kwd);
+	echo $kwd."\n";
 	global $dateTime;
 	$content = get_web_page(SERP_TEN.rawurlencode($kwd));
 	$str_len = mb_strlen($content);
 	if ($str_len < 10000) {
-		var_dump("Pass, str_len = ".$str_len);
+		echo "Pass, str_len = " . $str_len . "\n";
 		return;
 	}
 	
@@ -85,9 +85,8 @@ function kwds_2_earth($kwds_res) {
 	foreach ($kwds_res['result'] as $kwd => $val) {
 		if (isset($val["fa"]["updated_at"])) {
 			$u_at = strtotime($val["fa"]["updated_at"]);
-			if ($u_at > ($time_stamp-(86400*30*6))) {
+			if ($u_at > ($time_stamp-(86400*30*6)))
 				$res[] = $kwd;
-			}
 		}
 	}
 	return $res;
