@@ -4,6 +4,8 @@ require_once __DIR__."/Tokenizer.php";
 require_once __DIR__."/bootstrap.php";
 require_once __DIR__."/Utilities.php";
 require_once __DIR__."/Content.php";
+require_once __DIR__."/app_log.php";
+
 use NlpTools\FeatureFactories\DataAsFeatures;
 use NlpTools\Documents\TokensDocument;
 use NlpTools\Documents\TrainingSet;
@@ -13,15 +15,17 @@ $time_stamp = time();
 $dateTime = date("Y-m-d H:i:s", $time_stamp);
 $date = date("Y-m-d", $time_stamp);
 
-$conn = db_init();
+//$conn = db_init();
 start();
-$conn->close();
+//$conn->close();
 
 function start() {
 	global $date;
 	$kwds = get_log_kwd($date);
-	foreach ($kwds as $kwd)
-		gen_kwd($kwd);
+	//foreach ($kwds as $kwd)
+	for ($i=390 ; $i<400 ; $i++) {
+		gen_kwd($kwds[$i]);
+	}
 }
 
 function gen_kwd($kwd) {
@@ -56,9 +60,9 @@ function gen_kwd($kwd) {
 	);
 	 
 	// run the sampler 50 times
-	$lda->train($tset, 50);
+	$lda->train($tset, 100);
 	
-	// just the 10 largest probabilities
+	// just the 5 largest probabilities
 	list($ptw, $words_in_topic) = $lda->getWordsPerTopicsProbabilities(5);
 	get_horizontal($ptw, $words_in_topic);
 }
@@ -85,7 +89,7 @@ function kwds_2_earth($kwds_res) {
 	foreach ($kwds_res['result'] as $kwd => $val) {
 		if (isset($val["fa"]["updated_at"])) {
 			$u_at = strtotime($val["fa"]["updated_at"]);
-			if ($u_at > ($time_stamp-(86400*30*6)))
+			if ($u_at > ($time_stamp-(86400*30*3)))
 				$res[] = $kwd;
 		}
 	}

@@ -54,8 +54,7 @@ class Lda {
 	 * Generate an array suitable for use with Lda::initialize and
 	 * Lda::gibbsSample from a training set.
 	 */
-	public function generateDocs(TrainingSet $tset)
-	{
+	public function generateDocs(TrainingSet $tset) {
 		$docs = array();
 		foreach ($tset as $d)
 			$docs[] = $this->ff->getFeatureArray('',$d);
@@ -69,8 +68,7 @@ class Lda {
 	 *
 	 * @param array $docs The docs that we will use to generate the sample
 	 */
-	public function initialize(array &$docs)
-	{
+	public function initialize(array &$docs) {
 		$doc_keys = range(0,count($docs)-1);
 		$topic_keys = range(0,$this->ntopics-1);
 		// initialize the arrays
@@ -98,12 +96,22 @@ class Lda {
 				array()
 			);
 		$this->voc = array();
-
-		foreach ($docs as $i=>$doc) {
+		foreach ($docs as $i => $doc) {
 			$this->words_in_doc[$i] = count($doc);
-			foreach ($doc as $idx=>$w) {
-				// choose a topic randomly to assign this word to
-				$topic = (int) ($this->mt->generate()*$this->ntopics);
+			$topic = $word_idx = 0;
+			$word_topic_count = (count($doc) / $this->ntopics);
+			foreach ($doc as $idx => $w) {
+
+				//according words position to set topic
+				if ($word_idx < $word_topic_count) {
+					$word_idx++;
+				} else {
+					$word_idx = 0;
+					$topic++;
+				}
+//				// choose a topic randomly to assign this word to
+//				$topic = (int) ($this->mt->generate() * $this->ntopics);
+
 				//$this->words_in_doc[$i]++;
 				$this->words_in_topic[$topic]++;
 				$this->count_docs_topics[$i][$topic]++;
@@ -124,7 +132,7 @@ class Lda {
 	 * @param TrainingSet The docs to run lda on
 	 * @param $it The number of iterations to run
 	 */
-	public function train(TrainingSet $tset,$it) {
+	public function train(TrainingSet $tset, $it) {
 		$docs = $this->generateDocs($tset);
 		$this->initialize($docs);
 		while ($it-- > 0) {

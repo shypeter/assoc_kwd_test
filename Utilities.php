@@ -1,17 +1,26 @@
 <?php
 function get_log_kwd($date) {
-	global $conn;
-	$kwds = [];
-	$query = LOG_KWDS;
-	$res = $conn->query($query);
-	while($row = $res->fetch_array(MYSQLI_BOTH)) {
-		$split_arr = preg_split('/[,]+/', $row['key_word']);
+//	global $conn, $app_log;
+//	$kwds = [];
+//	$query = LOG_KWDS;
+//	$res = $conn->query($query);
+//	while($row = $res->fetch_array(MYSQLI_BOTH)) {
+//		$split_arr = preg_split('/[,]+/', $row['key_word']);
+//		foreach($split_arr as $kwd) {
+//			if ($kwd!="")
+//				$kwds[$kwd] = 1;
+//		}
+//	}
+//	$res->free();
+//	$kwds = array_keys($kwds);
+	global $app_log;
+	foreach ($app_log as $val) {
+		$split_arr = preg_split('/[,]+/', $val['key_word']);
 		foreach($split_arr as $kwd) {
-			if ($kwd!="")
+			if ($kwd != "")
 				$kwds[$kwd] = 1;
 		}
 	}
-	$res->free();
 	$kwds = array_keys($kwds);
 	return $kwds;
 }
